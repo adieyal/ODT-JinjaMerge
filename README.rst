@@ -1,8 +1,6 @@
 Overview
 -------------
-This is an early proof of concept.
-Currently this is VERY hardcoded, but I thought it would be worth releasing:
-The merge-csv.py file requires a file called 'data.csv'
+This is a slightly better version of pigeonflight's (https://github.com/pigeonflight) mailmerge. It also converts the output to pdf which is something that I need.
 
 If you're comfortable with python and the commandline you should be able to find your way around.
 
@@ -10,38 +8,23 @@ Preparation:
 --------------
 The script expects a 'data.csv' file and 'content4.xml.tmpl' file in the same directory
 
-You will need to install Jinja::
+You will need to install Jinja and arg::
 
-   easy_install Jinja2
+   sudo pip install Jinja2 arg
 
-About the content4.xml.tmpl file
------------------------------------
+You will also need to run openoffice in server mode (for the pdf generation):
+   soffice "--accept=socket,port=2002;urp;"&
 
-This file is typically created as follows:
+About the openoffice template file
+----------------------------------
 
-1. Create an OpenOffice Document and include Jinja style syntax for merge fields
-
-2. Unpack the document using an unzip program
-
-3. Name the content.xml file content4.xml.tmpl
-
-4. Get a suitable data.csv file with fields that match the content4.xml.tmpl
-
-5. run the merge-csv.py command to execute the merge
-
-6. put the merged output (content.xml file) back into a copy of the unpacked openoffice document
-
-7. zip it up again (rename to odt if necessary)
+This is a standard openoffice template file using Jinja style syntax for merge fields (I suspect  you can also do cool things like conditional stuff, loops etc but I haven't tested this)
 
 Usage
 ----------
-While in the directory with the 'data.csv' and 'content4.xml.tmpl' run the following::
+   python --template /path/to/odpfile --data /path/to/data.csv
 
-   python merge-csv.py > content.xml
-
-The result will be an ODT (openoffice style) content.xml file
-
-This can be added to an unzipped openoffice document (ODT) to replace the content.xml, then rezip and rename to ODT. The resulting document will contain your merged output.
+The result will be an ODT and a PDF person in the data.csv (for the moment their is an implicit assumption that the csv file contains first_name and last_name fields although this is easy to remove)
 
 Utilities
 -------------
@@ -53,32 +36,5 @@ usage::
 
    python prettyprint.py > cleanedupversion.xml
 
-Typical Project
------------------
-Create a file and include fields like::
 
- {{user['First_Name']}} {{user['Last_Name']}}
- {{user['Sector_of_Interest']}}
- {{user['Profile_Resume']}}
-
-These would be derived from the data.csv and then merged into the template.
-
-Create directory for the project::
-
-  mkdir myproject
-  mv myodtfile.odt myproject
-  
-  mkdir myproject/source
-  cd myproject/source
-  unzip ../myodtfile.odt
-
-The result will be a source directory containing the openoffice file structure, including a content.xml file
-
-Run prettyprint on the content.xml::
-
-    path/to/prettyprint.py content.xml > prettycontent.xml
-    cp prettycontent.xml content.xml
-
-Then edit the content.xml to make any customizations.
-
-Finally follow the instructions at the top to create a new merge of the odt.
+-- I think this can probably be chucked
